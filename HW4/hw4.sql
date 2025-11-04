@@ -67,8 +67,8 @@ CREATE TABLE address (
     address2 VARCHAR (100),
     district VARCHAR (100),
     city_id INT,
-    postal_code INT,
-    phone VARCHAR (20),
+    postal_code INT, 	-- Added "NULL" into the data for missing values in 1-4
+    phone VARCHAR (20),	-- ^^^^^ Just 1-2
     
     -- Contraints
     CONSTRAINT PK_address PRIMARY KEY (address_id),
@@ -137,7 +137,8 @@ CREATE TABLE customer (
     -- Contraints
     CONSTRAINT PK_customer PRIMARY KEY (customer_id),
     CONSTRAINT FK_customer_store FOREIGN KEY (store_id) REFERENCES store(store_id),
-    CONSTRAINT FK_customer_addr FOREIGN KEY (address_id) REFERENCES address(address_id)
+    CONSTRAINT FK_customer_addr FOREIGN KEY (address_id) REFERENCES address(address_id),
+    CONSTRAINT CK_customer_active CHECK (active in (0, 1))
 );
 
 -- Staff Table
@@ -187,9 +188,7 @@ CREATE TABLE rental (
     CONSTRAINT FK_rental_inv FOREIGN KEY (inventory_id) REFERENCES inventory(inventory_id),
     CONSTRAINT FK_rental_cust FOREIGN KEY (customer_id) REFERENCES customer(customer_id),
     CONSTRAINT FK_rental_staff FOREIGN KEY (staff_id) REFERENCES staff(staff_id),
-    CONSTRAINT UQ_rental_inv UNIQUE (inventory_id),
-    CONSTRAINT UQ_rental_cust UNIQUE (customer_id),
-    CONSTRAINT UQ_rental_date UNIQUE (rental_date)
+    CONSTRAINT UQ_rental_inv UNIQUE (inventory_id, customer_id, rental_date)
 );
 
 -- Payment Table
